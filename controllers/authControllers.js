@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const User = require('../models/users');
 
 // handle errors
@@ -13,16 +14,19 @@ const handleErrors = (err) => {
 
   // validation errors
   if (err.message.includes('user validation failed')) {
-    // console.log(err);
     Object.values(err.errors).forEach(({ properties }) => {
-      // console.log(val);
-      // console.log(properties);
       errors[properties.path] = properties.message;
     });
   }
 
   return errors;
 };
+
+const maxAge = 3 * 24 * 60 * 60; // Measured in seconds
+// Create JWT Tokens
+const createToken = (id) => jwt.sign({ id }, '2nd Arg is a SECRET', {
+  expiresIn: maxAge,
+});
 
 // controller actions
 module.exports.signup_get = (req, res) => {
@@ -38,7 +42,11 @@ module.exports.signup_post = async (req, res) => {
 
   try {
     const user = await User.create({ email, password });
-    res.status(201).json(user);
+    // eslint-disable-next-line no-underscore-dangle
+    const token = createToken(user._id);
+    res.cookie('cookieName', token, { httpOnly: true, maxAge: maxAge * 1000 });
+    // eslint-disable-next-line no-underscore-dangle
+    res.status(201).json({ user: user._id });
   } catch (err) {
     const errors = handleErrors(err);
     res.status(400).json({ errors });
