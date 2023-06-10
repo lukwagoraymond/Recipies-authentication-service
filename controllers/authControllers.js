@@ -11,6 +11,15 @@ const handleErrors = (err) => {
     errors.email = 'that email is already registered';
     return errors;
   }
+  // Deal with un-existant email
+  if (err.message.includes('incorrect email')) {
+    errors.email = 'That Email is not Registered';
+  }
+
+  // Deal with wrong password
+  if (err.message.includes('incorrect password')) {
+    errors.password = 'Wrong Password: Input Correct One';
+  }
 
   // validation errors
   if (err.message.includes('user validation failed')) {
@@ -59,8 +68,12 @@ module.exports.login_post = async (req, res) => {
   try {
     const user = await User.authLogin(email, password);
     // eslint-disable-next-line no-underscore-dangle
+    const token = createToken(user._id);
+    res.cookie('cookieName', token, { httpOnly: true, maxAge: maxAge * 1000 });
+    // eslint-disable-next-line no-underscore-dangle
     res.status(200).json({ user: user._id });
   } catch (err) {
-    res.status(400).json({});
+    const errors = handleErrors(err);
+    res.status(400).json({ errors });
   }
 };
