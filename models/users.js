@@ -31,6 +31,17 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
+// eslint-disable-next-line func-names
+userSchema.statics.authLogin = async function authLogin(email, password) {
+  const user = await this.findOne({ email });
+  if (user) {
+    const auth = await bcrypt.compare(password, user.password);
+    if (auth) {
+      return user;
+    } throw Error('incorrect password');
+  } throw Error('incorrect email');
+};
+
 // Create a model from the created Schema above
 const User = mongoose.model('user', userSchema);
 
