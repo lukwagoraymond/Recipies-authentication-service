@@ -47,7 +47,7 @@ raymond@raymond-ThinkPad-T480:~/auth_project$ nodemon app.js
 
 ## Authors and acknowledgment :school:
 * Raymond Lukwago - [Github](https://github.com/lukwagoraymond) / [Twitter](https://twitter.com/lukwagoraymond)  
-* Acknowledgement to Net Ninja for the tutor guidance - [Github](https://github.com/iamshaunjp)
+* Acknowledgement to Shaun for the tutor guidance - [Github](https://github.com/iamshaunjp)
 
 ## Bugs :bug:
 - Login Front End still displays Error text on form element for email
